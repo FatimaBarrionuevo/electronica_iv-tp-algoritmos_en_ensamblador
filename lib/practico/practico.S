@@ -37,8 +37,8 @@
  */
 defun suma
     push {r4-r11,lr}
-    // Insertar código a continuación
-
+    // Instruccion de suma para a y b
+    ADD R0, R0, R1
     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun suma
@@ -59,6 +59,14 @@ endfun suma
 defun sumatoria
     push {r4-r11,lr}
     // Insertar código a continuación
+    //Muevo los valores que tengo almacenados en R0  y R1 de manera que queden libres y sean usado solo para los resultados 
+    MOV R2 ,R0 // muevo el valor n que estaba en el registro R0 al registro R4
+    MOV R3 ,R1 // muevo el valor de n que estaba en el registro R1 al registro R4
+    // Ya tengo liberados los registros reservados para resultados, veo como inicializo los registros 
+    MOV R0, #0
+    MOV R1, #0
+    MOV R4, #0 // este registro hará las veces de índice del arreglo
+
 
     // Retorno, antes R1:R0 debe tener el valor correcto
     pop {r4-r11,pc}
