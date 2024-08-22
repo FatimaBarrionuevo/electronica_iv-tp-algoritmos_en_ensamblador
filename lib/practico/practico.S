@@ -36,10 +36,8 @@
  *  R0     : suma, entero de 32 bit con signo
  */
 defun suma
-    push {r4-r11,lr}
-    // Instruccion de suma para a y b
-    ADD R0, R0, R1
-    // Retorno, antes R0 debe tener el valor correcto
+    push {r4-r11,lr}   // Instruccion de suma para a y b
+    ADD R0, R0, R1     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun suma
 
@@ -60,17 +58,38 @@ defun sumatoria
     push {r4-r11,lr}
     // Insertar código a continuación
     //Muevo los valores que tengo almacenados en R0  y R1 de manera que queden libres y sean usado solo para los resultados 
-    MOV R2 ,R0 // muevo el valor n que estaba en el registro R0 al registro R4
-    MOV R3 ,R1 // muevo el valor de n que estaba en el registro R1 al registro R4
+    MOV R3 ,R0 // muevo el valor n que estaba en el registro R0 al registro R3
+    MOV R4 ,R1 // muevo el valor de n que estaba en el registro R1 al registro R4
     // Ya tengo liberados los registros reservados para resultados, veo como inicializo los registros 
     MOV R0, #0
     MOV R1, #0
-    MOV R4, #0 // este registro hará las veces de índice del arreglo
+    MOV R5, #0 //registro para indice del arreglo
+    B 3f
 
+0:
+    LDR R2,[R4,R5,LSL#2]
+    CMP R2, #0
+    BLT 1f
+    ADDS R0, R2
+    ADC R1, #0
+    B 1f
 
-    // Retorno, antes R1:R0 debe tener el valor correcto
+1:
+    ADDS R0, R2
+    ADC R1, #-1
+
+2: 
+    ADD R5, #1
+
+3:
+    CMP R5,R3
+    BLT 0b
+    //retorno, antes R0:R1 debe tener el valor correcto
     pop {r4-r11,pc}
-endfun sumatoria
+    endfun sumatoria
+
+
+
 
 /**
  * Encuentra la posicion del máximo elemento de un arreglo
@@ -88,7 +107,30 @@ endfun sumatoria
 defun posicion_maximo
     push {r4-r11,lr}
     // Insertar código a continuación
+    MOV R3, R0 // n pasa a R3
+    MOV R0, #0 // inicializo R0=0
+    MOV R4, #0 // inicializo R4=0 para indice
+    MOV R5, #0 
+    B 3f
 
+0:
+    LDR R2, [R1,R4,LSL#2]
+    CMP R2,R5
+    BGE 1f
+    B 2f
+
+1: 
+    MOV R0,R4
+
+2:
+    ADD R4,#1
+
+3:
+    CMP R4, R3
+    BLT 0b
+    pop {r4-r11,pc}
+
+    
     // Retorno, antes R0 debe tener el valor correcto
     pop {r4-r11,pc}
 endfun posicion_maximo
@@ -113,7 +155,31 @@ endfun posicion_maximo
 defun ordenar_en_sitio_menor_a_mayor
     push {r4-r11,lr}
     // Insertar código a continuación
-
+defun ordenar_en_sitio_menor_a_mayor
+    push {r4-r11,lr}
+    // Insertar código a continuación
+    MOV R4, #0   // Índice i
+0:
+    CMP R4, R0
+    BGE 4f
+    MOV R5, #0   // Índice j
+1:
+    CMP R5, R0
+    BGE 3f
+    LDR R2, [R1, R4, LSL#2]   // Calcula la direccion como R1 + 4*R4
+    LDR R3, [R1, R5, LSL#2]
+    CMP R2, R3
+    BGE 2f
+    STR R2, [R1, R5, LSL#2]  //Guardo los elementos en la memoria
+    STR R3, [R1, R4, LSL#2]
+2:
+    ADD R5, #1
+    B 1b
+3:
+    ADD R4, #1
+    B 0b
+4:
     // Retorno
     pop {r4-r11,pc}
 endfun ordenar_en_sitio_menor_a_mayor
+    
